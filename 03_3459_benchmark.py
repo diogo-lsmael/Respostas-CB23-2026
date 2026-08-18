@@ -34,7 +34,12 @@ def medir_tempo(algoritmo, lista, repeticoes):
         copia = lista.copy()
 
         inicio = time.perf_counter()
-        algoritmo(copia)
+
+        try:
+            algoritmo(copia)
+        except RecursionError:
+            return None
+
         fim = time.perf_counter()
 
         soma += fim - inicio
@@ -44,40 +49,69 @@ def medir_tempo(algoritmo, lista, repeticoes):
 
 def benchmark(tamanhos, repeticoes):
     print()
-    print("=" * 65)
-    print("        BENCHMARK DE ALGORITMOS DE ORDENACAO")
-    print("=" * 65)
+    print("=" * 70)
+    print("             BENCHMARK DE ALGORITMOS DE ORDENACAO")
+    print("=" * 70)
     print(f"Repeticoes por teste: {repeticoes}")
     print()
 
-    print(f"{'Algoritmo':<20} {'N':>8} {'Cenario':>15} {'Tempo (s)':>15}")
-    print("-" * 65)
+    print(
+        f"{'Algoritmo':<20}"
+        f"{'N':>8}"
+        f"{'Cenario':>15}"
+        f"{'Tempo (s)':>15}"
+    )
 
-    for nome in algoritmos:
-        algoritmo = algoritmos[nome]
+    print("-" * 70)
+
+    for nome, algoritmo in algoritmos.items():
 
         for n in tamanhos:
+
+            # Caso medio
             lista = caso_medio(n)
             tempo = medir_tempo(algoritmo, lista, repeticoes)
 
-            print(
-                f"{nome:<20} {n:>8} "
-                f"{'Caso Medio':>15} {tempo:>15.8f}"
-            )
+            if tempo is None:
+                print(
+                    f"{nome:<20}"
+                    f"{n:>8}"
+                    f"{'Caso Medio':>15}"
+                    f"{'RecursionError':>15}"
+                )
+            else:
+                print(
+                    f"{nome:<20}"
+                    f"{n:>8}"
+                    f"{'Caso Medio':>15}"
+                    f"{tempo:>15.8f}"
+                )
 
+            # Pior caso
             lista = pior_caso(nome, n)
             tempo = medir_tempo(algoritmo, lista, repeticoes)
 
-            print(
-                f"{nome:<20} {n:>8} "
-                f"{'Pior Caso':>15} {tempo:>15.8f}"
-            )
+            if tempo is None:
+                print(
+                    f"{nome:<20}"
+                    f"{n:>8}"
+                    f"{'Pior Caso':>15}"
+                    f"{'RecursionError':>15}"
+                )
+            else:
+                print(
+                    f"{nome:<20}"
+                    f"{n:>8}"
+                    f"{'Pior Caso':>15}"
+                    f"{tempo:>15.8f}"
+                )
 
-    print("-" * 65)
+        print("-" * 70)
+
     print()
 
 
 tamanhos = [100, 500, 1000, 5000]
-repeticoes = 50
+repeticoes = 10
 
 benchmark(tamanhos, repeticoes)
